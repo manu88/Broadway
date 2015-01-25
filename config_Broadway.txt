@@ -1,0 +1,25 @@
+#####################################################################################################################
+# Mandatory Part
+
+ScriptFile =      /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/examples/main.js
+
+
+UserSearchPaths  = /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/JS/  
+UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/
+UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/HtmlFiles/
+
+
+# if set to 1, these modules will be dynamicaly loaded with the machine. 
+Network   = 0
+Webserver = 1
+Gpio      = 0
+
+items = 23 14 test foo
+
+
+#####################################################################################################################
+#	User's part
+
+DeviceName = "MuseoPlayer_1"
+
+test    = "echo sent back"
