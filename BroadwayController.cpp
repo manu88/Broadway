@@ -214,6 +214,8 @@ void BroadwayController::registerFunctions()
 void BroadwayController::signalReset()
 {
     _shouldReset = true;
+    fflush(stdin);
+    
 }
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
@@ -521,7 +523,7 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
     
     else if ( selector->identifier == "getScriptText")
     {
-        vars->setReturnVar( new CScriptVar ( FileSystem::getFileText(_currentScriptFile ) ) );
+        vars->setReturnVar( new CScriptVar ( FileSystem::getFileText( _currentScriptFile ) ) );
         
         return true;
     }
