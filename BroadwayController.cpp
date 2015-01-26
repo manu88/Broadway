@@ -31,15 +31,11 @@ _gpioCallback   ( "" ),
 _serialCallback ( "" )
 
 {
-
     _coreModulesLoaded.addModule( JAVA_INTERPRETER );
     
     _jsMachine.setDelegate( this );
     
     _scheduler.setDelegate( this );
-
-
-
 }
 
 BroadwayController::~BroadwayController()
@@ -54,10 +50,8 @@ BroadwayController::~BroadwayController()
 bool BroadwayController::loadConfigFile( const std::string fileConfig )
 {
     if ( !FileSystem::fileExists( fileConfig ) )
-    {
-
         return false;
-    }
+
     
     _config.clear();
     _userSearchPaths.clear();
@@ -82,12 +76,6 @@ bool BroadwayController::loadConfigFile( const std::string fileConfig )
                     _userSearchPaths.push_back( FileSystem::correctPathIfNeeded( path ) );
                 else
                     Log::log("Warning = '%s' is not a correct path for user paths " , path.c_str()  );
-            }
-            
-            Log::log("User paths list:");
-            for ( std::string p : _userSearchPaths )
-            {
-                Log::log("\t '%s'" , p.c_str() );
             }
 
         }
@@ -156,6 +144,7 @@ void BroadwayController::registerFunctions()
 {
     
     _jsMachine.registerFunctionWithSignature("test(str)");
+    
     // Broadways functions
     
     _jsMachine.registerFunctionWithSignature("quit()");
@@ -284,20 +273,12 @@ bool BroadwayController::unloadAllModules()
 
 bool BroadwayController::loadController( AbstractController *controller )
 {
-    /*
-    if ( controller == nullptr )
-        return false;
-    */
+
     assert( controller );
 
-
-    
     controller->start();
     
     Controllers::waitForAllControllersToBeReady();
-    
-
-    
     
     return true;
 }
@@ -306,12 +287,9 @@ bool BroadwayController::unloadController( AbstractController *controller)
 {
     assert( controller );
     
-    Log::log(" Stoping %s Controller ..." , controller->getName().c_str() );
-    
     controller->stop();
     
     Controllers::waitForAllControllersToFinish();
-    
 
     return true;
 }
@@ -327,8 +305,6 @@ bool BroadwayController::addNetModule()
     _net = new NetworkController();
     _net->setDelegate( this );
     
-//    _net->addPort(8000);
-    
     return loadController( _net );
     
 }
@@ -336,6 +312,7 @@ bool BroadwayController::addNetModule()
 bool BroadwayController::removeNetModule()
 {
     unloadController( _net );
+    
     delete _net;
     
     _net = nullptr;
@@ -352,16 +329,16 @@ bool BroadwayController::addWebModule()
         return true;
     
     _web = new WebServer();
+    
     _web->setDelegate( this );
 
-    
-    return true; // started later 
-
+    return true; // started later
 }
 
 bool BroadwayController::removeWebModule()
 {
     unloadController( _web );
+    
     delete _web;
     
     _web = nullptr;
@@ -378,8 +355,8 @@ bool BroadwayController::addInterfaceModule()
         return true;
     
     _interface = new InterfaceController();
-    _interface->setDelegate( this );
     
+    _interface->setDelegate( this );
     
     return loadController( _interface );
 }
@@ -387,6 +364,7 @@ bool BroadwayController::addInterfaceModule()
 bool BroadwayController::removeInterfaceModule()
 {
     unloadController( _interface );
+    
     delete _interface;
     
     _interface = nullptr;
@@ -402,9 +380,6 @@ bool BroadwayController::run()
     prepareForConfigAndReload();
 
     bool withLiveParser = false;
-    
-    if ( withLiveParser )
-        Log::log("Interactive mode... Type quit(); to exit ");
     
     while ( _shouldQuit == false )
     {
@@ -422,7 +397,6 @@ bool BroadwayController::run()
         {
             usleep(4000);
         }
-        
         
     }
 
@@ -559,7 +533,7 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
             vars->setReturnVar( new CScriptVar( FileSystem::getFileText( file) ));
         
         else
-            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+            vars->setReturnVar( new CScriptVar() );
         
         return true;
     }
@@ -574,7 +548,7 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
         if ( !file.empty() )
             vars->setReturnVar( new CScriptVar( file ));
         else
-            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+            vars->setReturnVar( new CScriptVar() );
         
         return true;
     }
@@ -589,7 +563,7 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
         if ( !folder.empty() )
             vars->setReturnVar( new CScriptVar( folder ));
         else
-            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+            vars->setReturnVar( new CScriptVar() );
         
         return true;
     }

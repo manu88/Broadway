@@ -1,0 +1,100 @@
+################################################
+#                                              #
+# Makefile generated for Broadway Project      #
+#                                              #
+################################################
+# Project name     : Broadway
+# Target plateform : raspberrypi
+# Build mode       : Debug 
+# Version          : 1.0 
+
+#TOOLCHAIN	:=/usr/
+CC			:= gcc-4.8
+CXX       	:= g++-4.8
+
+CFLAGS+= -g 
+CXXFLAGS+= -g -DTARGET_RASPBERRY_PI
+################################################################################################
+#
+# User sources to build 
+#
+
+UserSRC = main.cpp \
+	BroadwayController.cpp \
+
+INCLUDES+= -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads/ -I/opt/vc/include/interface/vmcs_host/linux/
+
+LDFLAGS+=  -loscpack -lpthread -L/opt/vc/lib -lbcm_host -lbcm2835
+
+CXXFLAGS+= -std=c++0x   -Wall  
+
+################################################################################################
+
+
+CXXFLAGS+=  -DUSE_WEB_SERVER -DUSE_JAVA_INTERPRETER -DUSE_NETWORK -DUSE_GPIO
+# BASE CORE SOURES
+
+SRC+= ../Core/Internal/AbstractController.cpp \
+		../Core/Internal/Element.cpp \
+		../Core/Internal/Object.cpp \
+		../Core/Internal/Thread.cpp \
+		../Core/Internal/FileSystem.cpp \
+		../Core/Data/ArgumentsArray.cpp \
+		../Core/Data/Database.cpp \
+		../Core/Data/StringOperations.cpp \
+		../Core/Log/Log.cpp \
+		../Core/Scheduler/Event.cpp \
+		../Core/Scheduler/Scheduler.cpp \
+		../Core/Scheduler/Timecode.cpp \
+		
+# Web Component
+
+SRC+= ../Core/Web/WebServer.cpp \
+		../Core/Web/web/mongoose.c \
+		
+# JavaScript Component
+
+SRC+= ../Core/JSMachine/JSMachine.cpp \
+		../Core/JSMachine/JSMachineDelegate.cpp \
+		../Core/JSMachine/TinyJS/TinyJS_Functions.cpp \
+		../Core/JSMachine/TinyJS/TinyJS_MathFunctions.cpp \
+		../Core/JSMachine/TinyJS/TinyJS.cpp \
+		
+# Network Component
+
+SRC+= ../Core/Network/NetworkController.cpp \
+		
+# GPIO Component
+
+SRC+= ../Core/Interfaces/InterfaceController.cpp \
+		../Core/Interfaces/InterfaceEvent.cpp \
+		../Core/Interfaces/SerialInterface.cpp \
+		../Core/Interfaces/CanEvent.cpp \
+		../Core/Interfaces/GpioInterface.cpp \
+		../Core/Interfaces/Impl/GpioPlateformImpl.cpp \
+		../Core/Interfaces/Impl/CanPlateformImpl.cpp \
+
+TargetName = Broadway
+		
+OBJS+=$(filter %.o,$(SRC:.cpp=.o))
+
+OBJS+=$(filter %.o,$(SRC:.c=.o))
+
+UserOBJS+=$(filter %.o,$(UserSRC:.cpp=.o))
+
+
+%.o: %.cpp
+	@rm -f $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ -Wno-deprecated-declarations
+
+%.o: %.c
+	@rm -f $@
+	$(CXX) $(CFLAGS) $(INCLUDES) -x c -c $< -o $@ -Wno-deprecated-declarations
+
+
+all: $(OBJS) $(UserOBJS) 
+	$(CXX) $(CXXFLAGS) -o $(TargetName) $(OBJS) $(UserOBJS) $(LDFLAGS)
+
+clean:
+	for i in $(OBJS); do (if test -e "$$i"; then ( rm $$i ); fi ); done
+	rm $(TargetName)
