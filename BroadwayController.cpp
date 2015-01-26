@@ -423,9 +423,18 @@ bool BroadwayController::run()
     
     CircleWaitComponent *comp = new CircleWaitComponent();
     
-    comp->setTransparency(false);
+//    comp->setTransparency(false);
+    comp->setLayer(1);
     
+    _img = new GXImage("broadway.jpg");
+    _img->setLayer(0);
+    
+    _scene->addElement( _img );
     _scene->addElement( comp);
+    
+
+
+    _img->setNeedsDisplay();
     
     comp->startContinuousRendering();
     _scene->setNeedsDisplay();

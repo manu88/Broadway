@@ -22,14 +22,14 @@ CXXFLAGS+= -g -DTARGET_RASPBERRY_PI
 UserSRC = main.cpp \
 	BroadwayController.cpp \
 
-INCLUDES+= -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads/ -I/opt/vc/include/interface/vmcs_host/linux/ -I/usr/include/freetype2/
+INCLUDES+= -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads/ -I/opt/vc/include/interface/vmcs_host/linux/ 
 
-LDFLAGS+=  -loscpack -lpthread -L/opt/vc/lib -lbcm_host -lbcm2835 -lfreetype
+LDFLAGS+=  -loscpack -lpthread -L/opt/vc/lib -lbcm_host -lbcm2835 
 CXXFLAGS+= -std=c++0x   -Wall  
 
 # add GX
-LDFLAGS+= -L/opt/vc/lib -lGLESv2 -lEGL
-
+LDFLAGS+= -L/opt/vc/lib -lGLESv2 -lEGL -ljpeg -lfreetype
+INCLUDES+= -I/usr/include/freetype2/
 ################################################################################################
 
 
@@ -81,6 +81,7 @@ SRC+= ../Core/Interfaces/InterfaceController.cpp \
 SRC+= ../Core/GX/DisplayController.cpp \
 		../Core/GX/GXElement.cpp \
 		../Core/GX/GXPath.cpp \
+		../Core/GX/GXImage.cpp \
 		../Core/GX/GXScene.cpp \
 		../Core/GX/GXPaintJS.cpp \
 		../Core/GX/Painter.cpp \

@@ -114,6 +114,7 @@ private:
     DisplayController   *_display;
     
     GXScene *_scene;
+    GXImage *_img;
 
     
     /* JS callback signatures */
