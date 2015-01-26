@@ -4,7 +4,7 @@
 #                                              #
 ################################################
 # Project name     : Broadway
-# Target plateform : raspberrypi
+# Target plateform : Linux 
 # Build mode       : Debug 
 # Version          : 1.0 
 
@@ -22,16 +22,18 @@ CXXFLAGS+= -g -DTARGET_RASPBERRY_PI
 UserSRC = main.cpp \
 	BroadwayController.cpp \
 
-INCLUDES+= -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads/ -I/opt/vc/include/interface/vmcs_host/linux/
+INCLUDES+= -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads/ -I/opt/vc/include/interface/vmcs_host/linux/ -I/usr/include/freetype2/
 
-LDFLAGS+=  -loscpack -lpthread -L/opt/vc/lib -lbcm_host -lbcm2835
-
+LDFLAGS+=  -loscpack -lpthread -L/opt/vc/lib -lbcm_host -lbcm2835 -lfreetype
 CXXFLAGS+= -std=c++0x   -Wall  
+
+# add GX
+LDFLAGS+= -L/opt/vc/lib -lGLESv2 -lEGL
 
 ################################################################################################
 
 
-CXXFLAGS+=  -DUSE_WEB_SERVER -DUSE_JAVA_INTERPRETER -DUSE_NETWORK -DUSE_GPIO
+CXXFLAGS+=  -DUSE_WEB_SERVER -DUSE_JAVA_INTERPRETER -DUSE_NETWORK -DUSE_GPIO -DUSE_GRAPHICS
 # BASE CORE SOURES
 
 SRC+= ../Core/Internal/AbstractController.cpp \
@@ -73,6 +75,25 @@ SRC+= ../Core/Interfaces/InterfaceController.cpp \
 		../Core/Interfaces/GpioInterface.cpp \
 		../Core/Interfaces/Impl/GpioPlateformImpl.cpp \
 		../Core/Interfaces/Impl/CanPlateformImpl.cpp \
+
+# GX
+
+SRC+= ../Core/GX/DisplayController.cpp \
+		../Core/GX/GXElement.cpp \
+		../Core/GX/GXPath.cpp \
+		../Core/GX/GXScene.cpp \
+		../Core/GX/GXPaintJS.cpp \
+		../Core/GX/Painter.cpp \
+		../Core/GX/GXTextRenderer.cpp \
+		../Core/GX/GXFont.cpp \
+		../Core/Parsers/FontParser.cpp \
+
+# later move to another module
+
+SRC+= ../Core/GXDataType/Curve.cpp \
+		../Core/GXDataType/GXColors.cpp \
+		../Core/GXDataType/GXGeometry.cpp \
+		../Core/GXDataType/GXTransformations.cpp \
 
 TargetName = Broadway
 		

@@ -17,6 +17,12 @@
 
 int main(int argc, const char * argv[])
 {
+    if ( argc < 1)
+    {
+        printf("\n Usage : Broadway configFile.txt");
+        return 0;
+    }
+    
     ScopedPlateformConfig p;
     
     Log::addLocalLogger();
@@ -31,8 +37,8 @@ int main(int argc, const char * argv[])
     }
 
 
-      Log::cleanupLogger();
+    Log::cleanupLogger();
 
-
+    return 0;
 }
 

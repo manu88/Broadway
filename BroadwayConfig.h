@@ -27,11 +27,11 @@
 #ifndef USE_GPIO
     #define USE_GPIO
 #endif
-/*
+
 #ifndef USE_GRAPHICS
     #define USE_GRAPHICS
 #endif
-
+/*
 #ifndef USE_GRAPHICS_HELPERS
     #define USE_GRAPHICS_HELPERS
 #endif

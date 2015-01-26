@@ -12,7 +12,7 @@ UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/Ht
 # if set to 1, these modules will be dynamicaly loaded with the machine. 
 Network   = 1
 Webserver = 1
-Gpio      = 0
+Gpio      = 1
 
 
 

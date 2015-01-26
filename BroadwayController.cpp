@@ -21,6 +21,7 @@ _fileConfig ( fileConfig ),
 _net       ( nullptr ),
 _web       ( nullptr ),
 _interface ( nullptr ),
+_display   ( nullptr ),
 
 /* Callbacks signatures */
 

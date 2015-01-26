@@ -107,6 +107,7 @@ private:
     NetworkController   *_net;
     WebServer           *_web;
     InterfaceController *_interface;
+    DisplayController   *_display;
 
     
     /* JS callback signatures */
