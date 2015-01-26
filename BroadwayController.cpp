@@ -168,6 +168,8 @@ void BroadwayController::registerFunctions()
     _jsMachine.registerFunctionWithSignature("remplaceScriptText( text )");
     _jsMachine.registerFunctionWithSignature("getFileText( file )");
     
+    _jsMachine.registerFunctionWithSignature("getFileFromUserList( file )");
+    _jsMachine.registerFunctionWithSignature("getFolderFromUserList( folder )");
     
     // timers & scheduler
     _jsMachine.registerFunctionWithSignature("TIMER_setCallback( signature)");
@@ -485,7 +487,10 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
             vars->setReturnVar(new CScriptVar ( value ));
         }
         else
+        {
+            vars->setReturnVar(new CScriptVar () );
             Log::log("Value '%s' does not exists in config file '%s'" , item.c_str() , _fileConfig.c_str() );
+        }
         
         return true;
     }
@@ -559,7 +564,36 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
         return true;
     }
 
-
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "getFileFromUserList")
+    {
+        const std::string file = FileSystem::locateFileFromFoldersList( vars->getParameter("file")->getString() , _userSearchPaths);
+        
+        
+        if ( !file.empty() )
+            vars->setReturnVar( new CScriptVar( file ));
+        else
+            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "getFolderFromUserList")
+    {
+        const std::string folder = FileSystem::locateFolderFromFoldersList( vars->getParameter("folder")->getString() , _userSearchPaths);
+        
+        
+        if ( !folder.empty() )
+            vars->setReturnVar( new CScriptVar( folder ));
+        else
+            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+        
+        return true;
+    }
+    //
     
 
     return false;

@@ -1,0 +1,50 @@
+
+Broadway's internal JS functions:
+=====================================
+
+
+quit()
+-----------
+Will exit Broadway.
+Returns nothing.
+    
+getConfigValueForName( name )
+-----------
+Will search in config file ( parsed as first and only argument when launching Broadway) for name
+Returns the value if found, undefined if not.
+
+reloadMachine()
+-----------
+Restarts the whole machine.
+Returns nothing.
+
+import( file )
+-----------
+Import script file definition
+Returns nothing.
+
+
+getScriptText()
+-----------
+Returns a string containing the loaded script.
+
+remplaceScriptText( text )
+-----------
+Overwrite the current loaded script _file_ with text
+Returns nothing.
+
+getFileText( file )
+-----------
+Returns file's content in a string, undefined if an error occured ( file not found, etc.)
+
+
+getFileFromUserList( file )
+-----------
+Will try to find file in the user search paths ( defined in config file with 'UserSearchPaths' ).
+Returns the _first_ match found, undefined if nothing found.
+
+
+getFolderFromUserList( folder )
+-----------
+Will try to find folder in the user search paths ( defined in config file with 'UserSearchPaths' ).
+Returns the _first_ match found, undefined if nothing found.

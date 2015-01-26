@@ -20,9 +20,6 @@ int main(int argc, const char * argv[])
     ScopedPlateformConfig p;
     
     Log::addLocalLogger();
-    
-
-
 
     { // nested scope for Broadway to be deleted before cleanupLogger
         BroadwayController b( argv[1] );
