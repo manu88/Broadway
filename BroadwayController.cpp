@@ -92,6 +92,11 @@ bool BroadwayController::loadConfigFile( const std::string fileConfig )
         if ( _config.itemExists( NAME_ITEM_GPIO ) )
             _coreModulesLoaded.setModule( GPIO , _config.getValueForItemNameAsBool( NAME_ITEM_GPIO ) );
         
+        if ( _config.itemExists( NAME_ITEM_DISPLAY ) )
+            _coreModulesLoaded.setModule( GRAPHICS , _config.getValueForItemNameAsBool( NAME_ITEM_DISPLAY ) );
+        
+        
+        
         summarizeConfig();
         
     }
@@ -114,7 +119,7 @@ void BroadwayController::summarizeConfig()
     Log::log("Module Web server : %s " , _coreModulesLoaded.checkModule( WEB_SERVER )? "YES" : "NO" );
     Log::log("Module Network    : %s"  , _coreModulesLoaded.checkModule( NETWORK )? "YES" : "NO");
     Log::log("Module GPIO       : %s"  , _coreModulesLoaded.checkModule( GPIO )? "YES" : "NO");
-
+    Log::log("Module DISPLAY    : %s"  , _coreModulesLoaded.checkModule( GRAPHICS )? "YES" : "NO");
 }
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
@@ -242,6 +247,9 @@ bool BroadwayController::loadAllModules()
     if ( _coreModulesLoaded.checkModule( GPIO ))
         addInterfaceModule();
     
+    if ( _coreModulesLoaded.checkModule( GRAPHICS ))
+        addDisplayModule();
+    
     
     Controllers::waitForAllControllersToBeReady();
     
@@ -265,6 +273,9 @@ bool BroadwayController::unloadAllModules()
     
     if ( _coreModulesLoaded.checkModule( GPIO ))
         removeInterfaceModule();
+    
+    if ( _coreModulesLoaded.checkModule( GRAPHICS ))
+        removeDisplayModule();
     
     return true;
 }
@@ -376,11 +387,54 @@ bool BroadwayController::removeInterfaceModule()
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
+bool BroadwayController::addDisplayModule()
+{
+    if ( _display != nullptr )
+        return true;
+    
+    _display = new DisplayController();
+    
+    return loadController( _display );
+    
+}
+
+bool BroadwayController::removeDisplayModule()
+{
+    unloadController( _display );
+    
+    delete _display;
+    
+    _display = nullptr;
+    
+    return true;
+    
+}
+
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+
 bool BroadwayController::run()
 {
     prepareForConfigAndReload();
 
-    bool withLiveParser = false;
+    
+    _scene  = new GXScene();
+    _display->setDisplayedElement( _scene );
+    
+    CircleWaitComponent *comp = new CircleWaitComponent();
+    
+    comp->setTransparency(false);
+    
+    _scene->addElement( comp);
+    
+    comp->startContinuousRendering();
+    _scene->setNeedsDisplay();
+    
+    
+    
+    _display->update();
+    
+    bool withLiveParser = true;
     
     while ( _shouldQuit == false )
     {

@@ -13,6 +13,8 @@
 
 #include "BroadwayConfig.h"
 
+#include "../Core/GXExtra/GraphicsComponents.h"
+
 class BroadwayController : public JSMachineDelegate,
                            public NetworkControllerDelegate,
                            public WebServerDelegate,
@@ -60,6 +62,8 @@ private:
     bool addInterfaceModule();
     bool removeInterfaceModule();
     
+    bool addDisplayModule();
+    bool removeDisplayModule();
     
     // called by prepareForConfigAndReload() only
     bool loadController( AbstractController *controller );
@@ -108,6 +112,8 @@ private:
     WebServer           *_web;
     InterfaceController *_interface;
     DisplayController   *_display;
+    
+    GXScene *_scene;
 
     
     /* JS callback signatures */

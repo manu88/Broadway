@@ -57,8 +57,9 @@
 
 #define NAME_ITEM_USERPATHS "UserSearchPaths"
 
-#define NAME_ITEM_NET "Network"
-#define NAME_ITEM_WEB "Webserver"
-#define NAME_ITEM_GPIO "Gpio"
+#define NAME_ITEM_NET     "Network"
+#define NAME_ITEM_WEB     "Webserver"
+#define NAME_ITEM_GPIO    "Gpio"
+#define NAME_ITEM_DISPLAY "Display"
 
 #endif

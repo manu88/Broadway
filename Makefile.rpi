@@ -94,6 +94,7 @@ SRC+= ../Core/GXDataType/Curve.cpp \
 		../Core/GXDataType/GXColors.cpp \
 		../Core/GXDataType/GXGeometry.cpp \
 		../Core/GXDataType/GXTransformations.cpp \
+		../Core/GXExtra/GraphicsComponents.cpp \
 
 TargetName = Broadway
 		
