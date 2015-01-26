@@ -45,7 +45,7 @@ _serialCallback ( "" )
 BroadwayController::~BroadwayController()
 {
     unloadAllModules();
-    
+
     Log::log("Broadway succesfully returned\n");
 }
 
@@ -60,6 +60,7 @@ bool BroadwayController::loadConfigFile( const std::string fileConfig )
     }
     
     _config.clear();
+    _userSearchPaths.clear();
     
     if ( _config.parseFile( fileConfig , '=' ) )
     {
@@ -395,7 +396,7 @@ bool BroadwayController::run()
 {
     prepareForConfigAndReload();
 
-    bool withLiveParser = true;
+    bool withLiveParser = false;
     
     if ( withLiveParser )
         Log::log("Interactive mode... Type quit(); to exit ");
