@@ -64,7 +64,9 @@ bool BroadwayController::loadConfigFile( const std::string fileConfig )
     
     if ( _config.parseFile( fileConfig , '=' ) )
     {
-
+        if ( _config.itemExists("LogFile"))
+            Log::addFileLogger( _config.getValueForItemName<std::string>( "LogFile" ) );
+        
         if ( _config.itemExists( NAME_ITEM_SCRIPTFILE ))
             _currentScriptFile = _config.getValueForItemName<std::string>( NAME_ITEM_SCRIPTFILE );
         
@@ -164,6 +166,7 @@ void BroadwayController::registerFunctions()
     
     _jsMachine.registerFunctionWithSignature("getScriptText()");
     _jsMachine.registerFunctionWithSignature("remplaceScriptText( text )");
+    _jsMachine.registerFunctionWithSignature("getFileText( file )");
     
     
     // timers & scheduler
@@ -540,8 +543,22 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
         
         return true;
     }
+
+    /* **** **** **** **** */
     
-    //remplaceScriptText( text )
+    else if ( selector->identifier == "getFileText")
+    {
+        const std::string file = vars->getParameter("file")->getString();
+        
+        if ( FileSystem::fileExists( file ) )
+            vars->setReturnVar( new CScriptVar( FileSystem::getFileText( file) ));
+        
+        else
+            vars->setReturnVar( new CScriptVar( std::string("undefined") ));
+        
+        return true;
+    }
+
 
     
 

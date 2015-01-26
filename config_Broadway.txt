@@ -22,3 +22,5 @@ Gpio      = 0
 DeviceName = "MuseoPlayer_1"
 
 test    = "echo sent back"
+
+LogFile = /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/Log.txt
