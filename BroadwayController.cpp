@@ -404,6 +404,11 @@ bool BroadwayController::removeDisplayModule()
     
     delete _display;
     
+    if ( _scene )
+        delete _scene;
+    
+    _scene = nullptr;
+    
     _display = nullptr;
     
     return true;
