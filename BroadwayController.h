@@ -19,7 +19,8 @@ class BroadwayController : public JSMachineDelegate,
                            public NetworkControllerDelegate,
                            public WebServerDelegate,
                            public SchedulerDelegate,
-                           public InterfaceControllerDelegate
+                           public InterfaceControllerDelegate,
+                           public DisplayControllerDelegate
 {
 
 public:
@@ -73,6 +74,7 @@ private:
 
     void functionCalled( const Selector *selector );
         inline bool broadwayFunctionCalled( const Selector *selector);
+        inline bool gxFunctionCalled( const Selector *selector);
         inline bool netFunctionCalled( const Selector *selector);
         inline bool webFunctionCalled( const Selector *selector);
         inline bool timeFunctionCalled( const Selector *selector);
@@ -91,13 +93,15 @@ private:
     
     void inputChanged( const InterfaceEvent *event );
     
+    void displayDidChange( DisplayNotification notification );
+    
     bool _shouldQuit;
     bool _shouldReset;
     
     /* Attributes */
     
-    std::string _fileConfig;
-    std::string _currentScriptFile;
+    std::string              _fileConfig;
+    std::string              _currentScriptFile;
     std::vector<std::string> _userSearchPaths;
     
     
@@ -123,6 +127,7 @@ private:
     std::string _timerCallback;
     std::string _gpioCallback;
     std::string _serialCallback;
+    std::string _displayCallback;
 
     
     

@@ -29,7 +29,8 @@ _netCallback    ( "" ),
 _webCallback    ( "" ),
 _timerCallback  ( "" ),
 _gpioCallback   ( "" ),
-_serialCallback ( "" )
+_serialCallback ( "" ),
+_displayCallback( "" )
 
 {
     _coreModulesLoaded.addModule( JAVA_INTERPRETER );
@@ -208,6 +209,21 @@ void BroadwayController::registerFunctions()
         _jsMachine.registerFunctionWithSignature("SERIAL_closePort( port )");
         
     }
+    
+    if ( _coreModulesLoaded.checkModule(GRAPHICS ) )
+    {
+        _jsMachine.registerFunctionWithSignature("GX_getDisplayConfigs()");
+        _jsMachine.registerFunctionWithSignature("GX_setCallback( signature)");
+        _jsMachine.registerFunctionWithSignature("GX_setDisplayConfig( numConfig )");
+        
+        
+        _jsMachine.registerFunctionWithSignature("GX_powerOn()");
+        _jsMachine.registerFunctionWithSignature("GX_powerOff()");
+        _jsMachine.registerFunctionWithSignature("GX_isDisplayOn()");
+        
+        
+    }
+    
     
 }
 
@@ -394,6 +410,8 @@ bool BroadwayController::addDisplayModule()
     
     _display = new DisplayController();
     
+    _display->setDelegate( this );
+    
     return loadController( _display );
     
 }
@@ -422,13 +440,12 @@ bool BroadwayController::run()
 {
     prepareForConfigAndReload();
 
-    
+
     _scene  = new GXScene();
     _display->setDisplayedElement( _scene );
     
     CircleWaitComponent *comp = new CircleWaitComponent();
     
-//    comp->setTransparency(false);
     comp->setLayer(1);
     
     _img = new GXImage("broadway.jpg");
@@ -447,7 +464,7 @@ bool BroadwayController::run()
     
     
     _display->update();
-    
+ 
     bool withLiveParser = true;
     
     while ( _shouldQuit == false )
@@ -485,7 +502,10 @@ bool BroadwayController::stop()
 
 void BroadwayController::functionCalled( const Selector *selector )
 {
-    if      ( StringOperations::beginWith(selector->signature, "OSC_") && netFunctionCalled( selector ) )
+    if      ( StringOperations::beginWith(selector->signature, "GX_") && gxFunctionCalled( selector ) )
+        return;
+    
+    else if ( StringOperations::beginWith(selector->signature, "OSC_") && netFunctionCalled( selector ) )
         return;
     
     else if ( StringOperations::beginWith(selector->signature, "WEB_") && webFunctionCalled( selector ) )
@@ -639,6 +659,102 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
     //
     
 
+    return false;
+}
+
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+
+inline bool BroadwayController::gxFunctionCalled( const Selector *selector)
+{
+    CScriptVar *vars = selector->variables;
+    
+    if ( selector->identifier == "GX_getDisplayConfigs")
+    {
+        
+        CScriptVar *array = new CScriptVar();
+        array->setArray();
+        
+        int count = 0;
+        for (const DisplayInformations &mode : _display->getAvailableVideoMode() )
+        {
+            CScriptVar *tok = new CScriptVar();
+            tok->setArray();
+            
+            tok->setArrayIndex(0, new CScriptVar( mode.native ) );
+            tok->setArrayIndex(1, new CScriptVar( ( int ) mode.type ) );
+            tok->setArrayIndex(2, new CScriptVar( ( int ) mode.size.width ) );
+            tok->setArrayIndex(3, new CScriptVar( ( int ) mode.size.height ) );
+            tok->setArrayIndex(4, new CScriptVar( mode.framerate ) );
+            tok->setArrayIndex(5, new CScriptVar( mode.aspectRatio ) );
+            
+            array->setArrayIndex( count, tok);
+            
+            count++;
+        }
+        
+        vars->setReturnVar( array );
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setCallback" )
+    {
+        _displayCallback = vars->getParameter("signature")->getString();
+    
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setDisplayConfig" )
+    {
+        const int index = vars->getParameter("numConfig")->getInt();
+
+        bool ret = false;
+        
+        if ( index < ( int ) _display->getAvailableVideoMode().size() )
+        {
+            const DisplayInformations &info = _display->getAvailableVideoMode().at( index );
+            
+            ret = _display->setVideoModeTo( info );
+            
+        }
+        
+        vars->setReturnVar( new CScriptVar( ret ));
+
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_powerOn")
+    {
+        
+        _display->powerOn();
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_powerOff")
+    {
+        _display->powerOff();
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_isDisplayOn")
+    {
+        vars->setReturnVar( new CScriptVar ( _display->isDisplayOn() ) );
+        
+        return true;
+    }
+    
     return false;
 }
 
@@ -1071,13 +1187,29 @@ void BroadwayController::inputChanged( const InterfaceEvent *event )
         
         _jsMachine.evaluateAsString( stream.str().c_str() );
         
-
-        
     }
+
+}
+
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+
+void BroadwayController::displayDidChange( DisplayNotification notification )
+{
+//    Log::log("display notification");
+    
+    std::ostringstream stream;
+    stream
+    <<  _displayCallback
+    <<"("
+    << notification
+    << " );";
+    
+    _jsMachine.evaluateAsString( stream.str().c_str() );
     
 
 }
 
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
 
 
