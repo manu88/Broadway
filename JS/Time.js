@@ -89,7 +89,7 @@ function Timer()
         }
     */
     
-    this.setCallback = function( signature)
+    this.setCallback = function( signature /* string */)
     {
         TIMER_setCallback( signature);
     };
@@ -106,23 +106,23 @@ function Timer()
     // period
     this.hhP = 0;
     this.mmP = 0;
-    this.ssP = 0;
+    this.ssP = 1; // avoid empty period!
     this.msP = 0;
 
-    this.oneShot = false;
+    this.oneShot = false; // default is periodic
 
-    this.running = false;
+    this.running = false; // non running when initialized
     
     /* **** **** **** **** **** **** **** **** **** */
 
-    this.is = function ( id )
+    this.is = function ( id /* int */ )
     {
         return this.timerId == id;
     };
 
 
  
-    this.setStartDelay = function( hh , mm , ss , ms )
+    this.setStartDelay = function( hh , mm , ss , ms /* ints */ )
     {
         this.hhS = hh;
         this.mmS = mm;
@@ -130,7 +130,7 @@ function Timer()
         this.msS = ms;
     };
 
-    this.setPeriod = function( hh , mm , ss , ms )
+    this.setPeriod = function( hh , mm , ss , ms /* ints */ )
     {
         this.hhP = hh;
         this.mmP = mm;
@@ -138,7 +138,7 @@ function Timer()
         this.msP = ms;
     };
 
-    this.setPeriodic = function( periodic )
+    this.setPeriodic = function( periodic /* bool */ )
     {
         this.oneShot = !periodic;
     };

@@ -57,5 +57,7 @@ function Osc()
     
 }
 
+var osc = new Osc();
+
 
 

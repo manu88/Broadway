@@ -17,6 +17,44 @@
  */
 
 
+/* **** **** **** **** **** **** */
+/*
+	Notifications sent to display's callback ( see bellow.)
+	Simply use bit mask op to test a flag.
+
+	Example:
+
+	function myDisplayCallback( notification )
+	{
+	if ( notification & ( HDMI_UNPLUGGED) )
+		print("HDMI detached" );
+
+	else if ( notification & ( HDMI_ATTACHED ) )
+		print(" HDMI attached ");
+	}
+*/
+
+var HDMI_UNPLUGGED           = (1 << 0); // <HDMI cable is detached
+var HDMI_ATTACHED  			 = (1 << 1); // <HDMI cable is attached but not powered on
+var HDMI_DVI                 = (1 << 2); // <HDMI is on but in DVI mode (no audio)
+var HDMI_HDMI                = (1 << 3); // <HDMI is on and HDMI mode is active
+var HDMI_HDCP_UNAUTH         = (1 << 4); // <HDCP authentication is broken (e.g. Ri mismatched) or not active
+var HDMI_HDCP_AUTH           = (1 << 5); // <HDCP is active
+var HDMI_HDCP_KEY_DOWNLOAD   = (1 << 6); // <HDCP key download successful/fail
+var HDMI_HDCP_SRM_DOWNLOAD   = (1 << 7); // <HDCP revocation list download successful/fail
+var HDMI_CHANGING_MODE       = (1 << 8); // <HDMI is starting to change mode, clock has not yet been set
+
+var SDTV_UNPLUGGED           = 1 << 16; //  <SDTV cable unplugged, subject to platform support
+var SDTV_ATTACHED            = 1 << 17; //  <SDTV cable is plugged in
+var SDTV_NTSC                = 1 << 18; //  <SDTV is in NTSC mode
+var SDTV_PAL                 = 1 << 19; //  <SDTV is in PAL mode
+var SDTV_CP_INACTIVE         = 1 << 20; //  <Copy protection disabled
+var SDTV_CP_ACTIVE           = 1 << 21; //   <Copy protection enabled
+
+var DISPLAY_ACTIVE           = 1 << 30;
+
+
+/* **** **** **** **** **** **** */
 function Display() 
 {
 
