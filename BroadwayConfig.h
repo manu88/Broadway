@@ -62,4 +62,8 @@
 #define NAME_ITEM_GPIO    "Gpio"
 #define NAME_ITEM_DISPLAY "Display"
 
+#define NAME_ITEM_INIT_DELAY      "InitDelayInSec"
+#define NAME_ITEM_SPLASHSCREENIMG "SplashScreenImg"
+
+
 #endif

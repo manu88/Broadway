@@ -8,20 +8,26 @@ UserSearchPaths  = /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/JS
 UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/
 UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/HtmlFiles/
 
-
+####################
 # if set to 1, these modules will be dynamicaly loaded with the machine. 
 Network   = 1
 Webserver = 0
 Gpio      = 0
 Display   = 1
 
+SplashScreenImg = 
+
+####################
+# Add a delay ( in seconds ) a startup after modules init, so everyting can be initialized properly ( eg. wifi connections ).
+
+InitDelayInSec = 1
 
 
+#####################################################################################################################
 #####################################################################################################################
 #	User's part
 
 DeviceName = "MuseoPlayer_1"
 
-test    = "echo sent back"
 
 LogFile = /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/Log.txt

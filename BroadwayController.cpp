@@ -16,6 +16,8 @@ _shouldReset ( false ),
 
 _fileConfig ( fileConfig ),
 
+_delayAtInit( Timecode(0) ), // default : no delay
+
 /* Modules  */
 
 _net       ( nullptr ),
@@ -65,6 +67,10 @@ bool BroadwayController::loadConfigFile( const std::string fileConfig )
         
         if ( _config.itemExists( NAME_ITEM_SCRIPTFILE ))
             _currentScriptFile = _config.getValueForItemName<std::string>( NAME_ITEM_SCRIPTFILE );
+        
+        
+        if ( _config.itemExists( NAME_ITEM_INIT_DELAY ))
+            _delayAtInit = Timecode(0 ,0 , _config.getValueForItemNameAsInt( NAME_ITEM_INIT_DELAY ) );
         
         
         /* User's files path */
@@ -253,6 +259,9 @@ void BroadwayController::reset()
 bool BroadwayController::loadAllModules()
 {
      _scheduler.start();
+
+    if ( _coreModulesLoaded.checkModule( GRAPHICS ))
+        addDisplayModule();
     
     if ( _coreModulesLoaded.checkModule( NETWORK ))
         addNetModule();
@@ -262,15 +271,9 @@ bool BroadwayController::loadAllModules()
     
     if ( _coreModulesLoaded.checkModule( GPIO ))
         addInterfaceModule();
-    
-    if ( _coreModulesLoaded.checkModule( GRAPHICS ))
-        addDisplayModule();
-    
-    
-    Controllers::waitForAllControllersToBeReady();
-    
 
-    
+    Controllers::waitForAllControllersToBeReady();
+        
     return true;
 }
 
@@ -412,6 +415,36 @@ bool BroadwayController::addDisplayModule()
     
     _display->setDelegate( this );
     
+
+    Controllers::waitForControllerToBeReady( _display );    
+    /**/
+
+    
+    _scene  = new GXScene();
+    _display->setDisplayedElement( _scene );
+    
+    CircleWaitComponent *comp = new CircleWaitComponent();
+    
+    comp->setLayer(1);
+    
+    _splashScreen = new GXImage("broadway.jpg");
+    _splashScreen->setLayer(0);
+    
+    _scene->addElement( _splashScreen );
+    _scene->addElement( comp);
+    
+    
+    
+    _splashScreen->setNeedsDisplay();
+    
+    comp->startContinuousRendering();
+    _scene->setNeedsDisplay();
+    
+    
+    
+    _display->update();
+    /**/
+    
     return loadController( _display );
     
 }
@@ -441,29 +474,7 @@ bool BroadwayController::run()
     prepareForConfigAndReload();
 
 
-    _scene  = new GXScene();
-    _display->setDisplayedElement( _scene );
-    
-    CircleWaitComponent *comp = new CircleWaitComponent();
-    
-    comp->setLayer(1);
-    
-    _img = new GXImage("broadway.jpg");
-    _img->setLayer(0);
-    
-    _scene->addElement( _img );
-    _scene->addElement( comp);
-    
 
-
-    _img->setNeedsDisplay();
-    
-    comp->startContinuousRendering();
-    _scene->setNeedsDisplay();
-    
-    
-    
-    _display->update();
  
     bool withLiveParser = true;
     

@@ -98,11 +98,11 @@ private:
     bool _shouldQuit;
     bool _shouldReset;
     
-    /* Attributes */
-    
+    /* User Attributes */
     std::string              _fileConfig;
     std::string              _currentScriptFile;
     std::vector<std::string> _userSearchPaths;
+    Timecode                 _delayAtInit;
     
     
     JSMachine               _jsMachine;
@@ -118,7 +118,7 @@ private:
     DisplayController   *_display;
     
     GXScene *_scene;
-    GXImage *_img;
+    GXImage *_splashScreen;
 
     
     /* JS callback signatures */
