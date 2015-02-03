@@ -36,16 +36,16 @@ function main()
     for (var i = 0 ; i<modesCount ; i++)
     {
     	var isNative = videoModes[i][0];
-    	print("native = " + isNative );
+    	print("\tnative = " + isNative );
 
     	var type = videoModes[i][1];
-    	print("type = " + type);
+    	print("\ttype = " + type);
 
     	var w = videoModes[i][2];
-    	print("Width = " + w);
+    	print("\tWidth = " + w);
 
     	var h = videoModes[i][3];
-    	print("Height = " + h);
+    	print("\tHeight = " + h);
 
     }
 

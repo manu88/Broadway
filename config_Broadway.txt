@@ -15,7 +15,7 @@ Webserver = 0
 Gpio      = 0
 Display   = 1
 
-SplashScreenImg = 
+SplashScreenImg = broadway.jpg
 
 ####################
 # Add a delay ( in seconds ) a startup after modules init, so everyting can be initialized properly ( eg. wifi connections ).

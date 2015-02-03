@@ -79,8 +79,11 @@ SRC+= ../Core/Interfaces/InterfaceController.cpp \
 # GX
 
 SRC+= ../Core/GX/DisplayController.cpp \
+		../Core/GX/Impl/DisplayImpl.cpp \
 		../Core/GX/GXElement.cpp \
 		../Core/GX/GXPath.cpp \
+		../Core/GX/GXAnimation.cpp \
+		../Core/GX/Animations.cpp \
 		../Core/GX/GXImage.cpp \
 		../Core/GX/GXScene.cpp \
 		../Core/GX/GXPaintJS.cpp \

@@ -415,37 +415,42 @@ bool BroadwayController::addDisplayModule()
     
     _display->setDelegate( this );
     
-
-    Controllers::waitForControllerToBeReady( _display );    
-    /**/
-
+    _display->start();
     
+    
+    Log::log("\n wait for display to be ready...");
+    while ( _display->isReady() == false)
+    {
+    
+    }
+
     _scene  = new GXScene();
+
     _display->setDisplayedElement( _scene );
     
     CircleWaitComponent *comp = new CircleWaitComponent();
     
     comp->setLayer(1);
+    comp->setBounds( _scene->getBounds() );
     
-    _splashScreen = new GXImage("broadway.jpg");
+    _splashScreen = new GXImage( _config.getValueForItemName<std::string>( NAME_ITEM_SPLASHSCREENIMG ) );
     _splashScreen->setLayer(0);
     
+
     _scene->addElement( _splashScreen );
     _scene->addElement( comp);
-    
-    
-    
+
     _splashScreen->setNeedsDisplay();
     
     comp->startContinuousRendering();
     _scene->setNeedsDisplay();
     
-    
-    
     _display->update();
+
+    _splashScreen->setNeedsDisplay();
     /**/
     
-    return loadController( _display );
+    return true; // loadController( _display );
     
 }
 

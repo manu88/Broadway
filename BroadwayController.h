@@ -102,6 +102,7 @@ private:
     std::string              _fileConfig;
     std::string              _currentScriptFile;
     std::vector<std::string> _userSearchPaths;
+    
     Timecode                 _delayAtInit;
     
     
