@@ -228,15 +228,32 @@ void BroadwayController::registerFunctions()
     
     if ( _coreModulesLoaded.checkModule(GRAPHICS ) )
     {
+        /* Display config */
         _jsMachine.registerFunctionWithSignature("GX_getDisplayConfigs()");
         _jsMachine.registerFunctionWithSignature("GX_setCallback( signature)");
         _jsMachine.registerFunctionWithSignature("GX_setDisplayConfig( numConfig )");
-        
         
         _jsMachine.registerFunctionWithSignature("GX_powerOn()");
         _jsMachine.registerFunctionWithSignature("GX_powerOff()");
         _jsMachine.registerFunctionWithSignature("GX_isDisplayOn()");
         
+        /* Scene & elements */
+        
+        // GXElement
+        _jsMachine.registerFunctionWithSignature("GX_setNeedsDisplay( id )");
+        
+        _jsMachine.registerFunctionWithSignature("GX_setLayer( id , layer )");
+        _jsMachine.registerFunctionWithSignature("GX_getLayer( id )");
+        
+        _jsMachine.registerFunctionWithSignature("GX_setBounds( id , x , y , w , h )");
+        _jsMachine.registerFunctionWithSignature("GX_setPos( id , x , y )");
+        _jsMachine.registerFunctionWithSignature("GX_setSize( id , w , h )");
+        
+        _jsMachine.registerFunctionWithSignature("GX_setVisible( id , visible)");
+        _jsMachine.registerFunctionWithSignature("GX_isVisible( id )");
+        
+        _jsMachine.registerFunctionWithSignature("GX_AddImage( filename)");
+        _jsMachine.registerFunctionWithSignature("GX_AddPath()");        
         
     }
     
@@ -809,6 +826,177 @@ inline bool BroadwayController::gxFunctionCalled( const Selector *selector)
         
         return true;
     }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setNeedsDisplay")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+ 
+        if ( element )
+        {
+            element->setNeedsDisplay();
+        }
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setLayer")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+            element->setLayer( vars->getParameter("layer")->getInt() );
+
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_getLayer")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+            vars->setReturnVar( new CScriptVar( element->getLayer() ));
+        
+        return true;
+    }
+
+
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setBounds")
+    {
+        const int id = vars->getParameter("id")->getInt();
+
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+        {
+            const int x = vars->getParameter("x")->getInt();
+            const int y = vars->getParameter("y")->getInt();
+            const int w = vars->getParameter("w")->getInt();
+            const int h = vars->getParameter("h")->getInt();
+
+            element->setBounds(x, y, w, h);
+        }
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setPos")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+        {
+            const int x = vars->getParameter("x")->getInt();
+            const int y = vars->getParameter("y")->getInt();
+            
+            element->moveTo( x, y);
+        }
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setSize")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+        {
+            const int w = vars->getParameter("w")->getInt();
+            const int h = vars->getParameter("h")->getInt();
+            
+            element->setSize(w, h);
+        }
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_setVisible")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+        {
+            const bool vis = vars->getParameter("visible")->getBool();
+
+            element->setVisible( vis );
+        }
+        
+        return true;
+    }
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_isVisible")
+    {
+        const int id = vars->getParameter("id")->getInt();
+        
+        GXElement* element =  _scene->getElementByID( id);
+        
+        if ( element )
+        {
+            vars->setReturnVar( new CScriptVar( element->isVisible() ) );
+        }
+        
+        return true;
+    }
+    
+
+    
+    
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_AddImage")
+    {
+        const std::string file = vars->getParameter("filename")->getString();
+        
+        GXImage *img = new GXImage( file );
+        
+        _scene->addElement( img );
+        
+        vars->setReturnVar( new CScriptVar( img->getElementId() ) );
+        
+        return true;
+    }
+
+    /* **** **** **** **** */
+    
+    else if ( selector->identifier == "GX_AddPath")
+    {
+        GXPaintJS *path = new GXPaintJS();
+        
+        _scene->addElement( path );
+        
+        vars->setReturnVar( new CScriptVar( path->getElementId() ) );
+        
+        return true;
+    }
+
     
     return false;
 }

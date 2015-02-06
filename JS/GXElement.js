@@ -1,13 +1,24 @@
 /*
 
     This Class defines basic operations on displayed elements (GXElement class).
+
     
     This is a base class. The following objects are constructed from this one:
-    Image ( image.js )
-    Video ( video.js )
-    Path  ( path.js  )  
-
+    Image ( Image.js )
+    Video ( Video.js )
+    Path  ( Path.js  )  
+    
+    You don't have to import this header if you're using the these Objects, it will be automaticaly added.
 */
+
+/*
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <manuel.deneu@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.
+ * ----------------------------------------------------------------------------
+ */
 
 
 
@@ -20,53 +31,53 @@ function GXElement()
     
     this.update = function()
     {
-        GXElementSetNeedsDisplay( this.elementID );
+        GX_setNeedsDisplay( this.elementID );
     };
 
     /* **** **** **** **** **** **** **** **** **** **** **** */
 
     /* int */
-    this.setLayer = function( layer )
+    this.setLayer = function( layer  /*int */)
     {
-        GXElementSetLayer( this.elementID , layer );
+        GX_setLayer( this.elementID , layer );
     };
 
     this.getLayer = function()
     {
-        GXElementGetLayer( this.elementID );
+        GX_getLayer( this.elementID );
     };
 
 
     /* **** **** **** **** **** **** **** **** **** **** **** */    
 
     /* 4 ints */
-    this.setBounds = function( x , y , width , height )
+    this.setBounds = function( x , y , width , height  /*ints */)
     {
-        GXElementSetBounds( this.elementID , x , y , width , height);
+        GX_setBounds( this.elementID , x , y , width , height);
     };
 
     /* 2 ints */
-    this.setPos = function( x , y  )
+    this.setPos = function( x , y  /*ints */ )
     {
-        GXElementSetPos( this.elementID , x , y );
+        GX_setPos( this.elementID , x , y );
     };
 
-    this.setSize = function( width , height  )
+    this.setSize = function( width , height /*ints */  )
     {
-        GXElementSetSize( this.elementID , width , height );
+        GX_setSize( this.elementID , width , height );
     };    
 
     /* **** **** **** **** **** **** **** **** **** **** **** */
 
     /* bool */
-    this.setVisible = function( visible )
+    this.setVisible = function( visible  /*bool*/)
     {
-        GXElementSetVisible( this.elementID , visible );
+        GX_setVisible( this.elementID , visible );
     };
 
     this.isVisible = function()
     {
-        return GXElementIsVisible( this.elementID  );
+        return GX_isVisible( this.elementID  );
     };
 
     this.flipVisibility = function() 

@@ -10,7 +10,16 @@
     ...
 */
 
-import("JS/GXElement.js");
+/*
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <manuel.deneu@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.
+ * ----------------------------------------------------------------------------
+ */
+
+import("GXElement.js");
 
 function Image( filename ) 
 {
@@ -18,7 +27,7 @@ function Image( filename )
 
     this.filename = filename;
 
-    this.elementID = ImageAdd( filename );
+    this.elementID = GX_AddImage( filename );
 }
 
 
