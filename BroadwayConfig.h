@@ -65,5 +65,36 @@
 #define NAME_ITEM_INIT_DELAY      "InitDelayInSec"
 #define NAME_ITEM_SPLASHSCREENIMG "SplashScreenImg"
 
+#define BLANK_CONFIG "##################################################################################################################### \n\
+# Mandatory Part \n\
+\n\
+ScriptFile =  \n\
+\n\
+\n\
+UserSearchPaths  = \n\
+#UserSearchPaths += /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/ \n\
+\n\
+#################### \n\
+# if set to 1, these modules will be dynamicaly loaded with the machine. \n\
+Network   = 0 \n\
+Webserver = 0 \n\
+Gpio      = 0 \n\
+Display   = 0 \n\
+\n\
+\n\
+#################### \n\
+# Start-up \n\
+# Add a delay ( in seconds ) a startup after modules init, so everyting can be initialized properly ( eg. wifi connections ).\n\
+InitDelayInSec = 10 \n\
+\n\
+# if a delay is set, an image can be displayed during the initialisation. \n\
+# if not defined or null, the splash screen is discarded. \n\
+SplashScreenImg = broadway.jpg \n\
+\n\
+#####################################################################################################################\n\
+#####################################################################################################################\n\
+#	User's part \n\
+"
+
 
 #endif

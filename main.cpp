@@ -14,14 +14,39 @@
 
 #include "BroadwayController.h"
 
+bool generateBlankConfig()
+{
+    FILE *file = NULL;
+    
+    if ( (file = fopen("blank_config.txt", "w")))
+    {
+        fprintf(file, BLANK_CONFIG);
+        
+        fclose( file );
+        return true;
+        
+    }
+    return true;
+}
+
 
 int main(int argc, const char * argv[])
 {
     if ( argc < 1)
     {
         printf("\n Usage : Broadway configFile.txt");
+        printf("\n To generate a blank config file : Broadway -g");
         return 0;
     }
+    
+    if ( strcmp( argv[1] ,"-g") == 0 )
+    {
+        generateBlankConfig();
+        printf("\n Blank config file generated : blank_config.txt \n");
+        return 0;
+    }
+    
+    
     
     ScopedPlateformConfig p;
     
