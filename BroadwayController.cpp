@@ -25,6 +25,10 @@ _web       ( nullptr ),
 _interface ( nullptr ),
 _display   ( nullptr ),
 
+_scene        (nullptr),
+_splashScreen (nullptr),
+_circleComp   (nullptr),
+
 /* Callbacks signatures */
 
 _netCallback    ( "" ),
@@ -142,6 +146,12 @@ bool BroadwayController::prepareForConfigAndReload()
     
     loadAllModules();
     
+    if ( _delayAtInit.isValid() )
+    {
+        Thread::sleepFor( _delayAtInit );
+    }
+    
+    hideSplash();
     
     if ( _jsMachine.parseScriptFile( _currentScriptFile ) )
         _jsMachine.evaluateAsString("main();");
@@ -428,26 +438,9 @@ bool BroadwayController::addDisplayModule()
 
     _display->setDisplayedElement( _scene );
     
-    CircleWaitComponent *comp = new CircleWaitComponent();
+    showSplash();
+    /**/
     
-    comp->setLayer(1);
-    comp->setBounds( _scene->getBounds() );
-    
-    _splashScreen = new GXImage( _config.getValueForItemName<std::string>( NAME_ITEM_SPLASHSCREENIMG ) );
-    _splashScreen->setLayer(0);
-    
-
-    _scene->addElement( _splashScreen );
-    _scene->addElement( comp);
-
-    _splashScreen->setNeedsDisplay();
-    
-    comp->startContinuousRendering();
-    _scene->setNeedsDisplay();
-    
-    _display->update();
-
-    _splashScreen->setNeedsDisplay();
     /**/
     
     return true; // loadController( _display );
@@ -472,6 +465,53 @@ bool BroadwayController::removeDisplayModule()
 }
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+/* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
+
+void BroadwayController::showSplash()
+{
+    if ( !_coreModulesLoaded.checkModule( GRAPHICS ))
+        return;
+    
+    if ( _circleComp == nullptr )
+        _circleComp = new CircleWaitComponent();
+    
+    _circleComp->setLayer(1);
+    _circleComp->setBounds( _scene->getBounds() );
+    
+    if (_splashScreen == nullptr )
+        _splashScreen = new GXImage( _config.getValueForItemName<std::string>( NAME_ITEM_SPLASHSCREENIMG ) );
+
+    _splashScreen->setLayer(0);
+    
+    
+    _scene->addElement( _splashScreen );
+    _scene->addElement( _circleComp);
+    
+    _splashScreen->setNeedsDisplay();
+    
+    _circleComp->startContinuousRendering();
+    
+    _scene->setNeedsDisplay();
+    
+    _display->update();
+    
+    _splashScreen->setNeedsDisplay();
+}
+
+void BroadwayController::hideSplash()
+{
+    if ( !_coreModulesLoaded.checkModule( GRAPHICS ))
+        return;
+    
+    _circleComp->stopContinuousRendering();
+
+    _scene->removeElement( _circleComp );
+    _scene->removeElement( _splashScreen );
+    
+    _circleComp   = nullptr;
+    _splashScreen = nullptr;
+}
+
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
 bool BroadwayController::run()
@@ -539,8 +579,7 @@ void BroadwayController::functionCalled( const Selector *selector )
     
     else if (selector->identifier == "test")
     {
-        const std::string ctn = WebServer::getDecodedUrl(selector->variables->getParameter("str")->getString() );
-        printf("\n ret = '%s'",ctn.c_str());
+
         
     }
     // no -no -nooooo !! an registered function with no actual implementation was called !

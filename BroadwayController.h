@@ -42,6 +42,10 @@ public:
     
     void summarizeConfig();
     
+    // only relevant is GX module is on :-)
+    void showSplash();
+    void hideSplash();
+    
 private:
     
     /* Machine modules */
@@ -119,8 +123,9 @@ private:
     DisplayController   *_display;
     
     GXScene *_scene;
+    
     GXImage *_splashScreen;
-
+    CircleWaitComponent *_circleComp;
     
     /* JS callback signatures */
     std::string _netCallback;

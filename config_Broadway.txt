@@ -1,7 +1,7 @@
 #####################################################################################################################
 # Mandatory Part
 
-ScriptFile =      /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/examples/main.js
+ScriptFile =      /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/examples/main_gx.js
 
 
 UserSearchPaths  = /Users/manueldeneu/Documents/projets/dev/Broadway/Broadway/JS/  
@@ -20,7 +20,7 @@ SplashScreenImg = broadway.jpg
 ####################
 # Add a delay ( in seconds ) a startup after modules init, so everyting can be initialized properly ( eg. wifi connections ).
 
-InitDelayInSec = 1
+InitDelayInSec = 10
 
 
 #####################################################################################################################
