@@ -8,7 +8,16 @@
     
 */
 
-import("JS/GXElement.js");
+/*
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <manuel.deneu@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.
+ * ----------------------------------------------------------------------------
+ */
+
+import("GXElement.js");
 
 var ARC_OPEN  = 0; // default
 var ARC_CHORD = 1;
@@ -27,7 +36,7 @@ var Join_Bevel = 2;
 function Path() 
 {
     this.prototype = new GXElement();
-    this.elementID = PathAdd();
+    this.elementID = GX_AddPath();
 
     this.clear = function()
     {
