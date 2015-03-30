@@ -93,8 +93,8 @@ private:
                             const Database<std::string> &arguments
                            );
 
-    void scheduledEventReceived( TimedEvent &event);
-    
+
+    void scheduledEventReceived( Event &event);
     void inputChanged( const InterfaceEvent *event );
     
     void displayDidChange( DisplayNotification notification );

@@ -1210,7 +1210,7 @@ inline bool BroadwayController::timeFunctionCalled( const Selector *selector)
     else if ( selector->identifier == "TIMER_getRunningTC" )
     {
         
-        vars->setReturnVar( new CScriptVar ( _scheduler.getRunningTC().getInMs() ) );
+        vars->setReturnVar( new CScriptVar ( (double) _scheduler.getRunningTC().getInMs() ) );
 
         
         return true;
@@ -1390,7 +1390,7 @@ std::string BroadwayController::getRequest( const std::string &ipAddress ,
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
-void BroadwayController::scheduledEventReceived( TimedEvent &event)
+void BroadwayController::scheduledEventReceived( Event &event)
 {
 
 /*
@@ -1401,7 +1401,9 @@ void BroadwayController::scheduledEventReceived( TimedEvent &event)
         _interface->sendGpo(1, low);
     
     test = !test;
-*/    
+*/
+    /*
+    if (event)
     std::ostringstream stream;
     stream
     <<  _timerCallback <<"("
@@ -1410,6 +1412,7 @@ void BroadwayController::scheduledEventReceived( TimedEvent &event)
     
     
     _jsMachine.evaluateAsString( stream.str().c_str() );
+     */
 }
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
