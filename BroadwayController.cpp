@@ -11,10 +11,9 @@
 
 BroadwayController::BroadwayController( const std::string fileConfig ) :
 
-_shouldQuit  ( false ),
-_shouldReset ( false ),
+ApplicationBase ( fileConfig ),
 
-_fileConfig ( fileConfig ),
+_shouldReset ( false ),
 
 _delayAtInit( Timecode(0) ), // default : no delay
 
@@ -55,68 +54,58 @@ BroadwayController::~BroadwayController()
 
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
-bool BroadwayController::loadConfigFile( const std::string fileConfig )
+bool BroadwayController::loadConfigFile()
 {
-    if ( !FileSystem::fileExists( fileConfig ) )
-        return false;
+    
+    reloadDatabase();
+    
 
+    if ( getDatabase().itemExists("LogFile"))
+        Log::addFileLogger( getDatabase().getValueForItemName( "LogFile" )->getString() );
     
-    _config.clear();
-    _userSearchPaths.clear();
+    if ( getDatabase().itemExists( NAME_ITEM_SCRIPTFILE ))
+        _currentScriptFile = getDatabase().getValueForItemName( NAME_ITEM_SCRIPTFILE) ->getString() ;
     
-    if ( _config.parseFile( fileConfig , '=' ) )
+    
+    if ( getDatabase().itemExists( NAME_ITEM_INIT_DELAY ))
+        _delayAtInit = Timecode(0 ,0 , getDatabase().getValueForItemName( NAME_ITEM_INIT_DELAY )->getInt() );
+    
+    
+    /* User's files path */
+    
+    if ( getDatabase().itemExists( NAME_ITEM_USERPATHS ))
     {
-        if ( _config.itemExists("LogFile"))
-            Log::addFileLogger( _config.getValueForItemName<std::string>( "LogFile" ) );
-        
-        if ( _config.itemExists( NAME_ITEM_SCRIPTFILE ))
-            _currentScriptFile = _config.getValueForItemName<std::string>( NAME_ITEM_SCRIPTFILE );
-        
-        
-        if ( _config.itemExists( NAME_ITEM_INIT_DELAY ))
-            _delayAtInit = Timecode(0 ,0 , _config.getValueForItemNameAsInt( NAME_ITEM_INIT_DELAY ) );
-        
-        
-        /* User's files path */
-        
-        if ( _config.itemExists( NAME_ITEM_USERPATHS ))
+
+        for ( const auto path : getDatabase().getValueForItemNameAsVector( NAME_ITEM_USERPATHS ) )
         {
-
-            for ( auto path : _config.getValueForItemNameAsVector( NAME_ITEM_USERPATHS ) )
-            {
-                if (FileSystem::isFolder(path))
-                    _userSearchPaths.push_back( FileSystem::correctPathIfNeeded( path ) );
-                else
-                    Log::log("Warning = '%s' is not a correct path for user paths " , path.c_str()  );
-            }
-
+            if ( FileSystem::isFolder( path.getString() ) )
+                _userSearchPaths.push_back( FileSystem::correctPathIfNeeded( path.getString() ) );
+            else
+                Log::log("Warning = '%s' is not a correct path for user paths " , path.getString().c_str()  );
         }
-        
-        /* Modules list*/
-        
-        if ( _config.itemExists( NAME_ITEM_NET) )
-            _coreModulesLoaded.setModule( NETWORK , _config.getValueForItemNameAsBool( NAME_ITEM_NET ) );
-        
-        if ( _config.itemExists( NAME_ITEM_WEB ) )
-            _coreModulesLoaded.setModule( WEB_SERVER , _config.getValueForItemNameAsBool( NAME_ITEM_WEB ) );
-        
-        if ( _config.itemExists( NAME_ITEM_GPIO ) )
-            _coreModulesLoaded.setModule( GPIO , _config.getValueForItemNameAsBool( NAME_ITEM_GPIO ) );
-        
-        if ( _config.itemExists( NAME_ITEM_DISPLAY ) )
-            _coreModulesLoaded.setModule( GRAPHICS , _config.getValueForItemNameAsBool( NAME_ITEM_DISPLAY ) );
-        
-        
-        
-        summarizeConfig();
-        
+
     }
     
-    else
-    {
-        Log::log(" Error, can't open '%s' for config parse" , fileConfig.c_str() );
-        return false;
-    }
+    /* Modules list*/
+    
+    if ( getDatabase().itemExists( NAME_ITEM_NET) )
+        _coreModulesLoaded.setModule( NETWORK , getDatabase().getValueForItemName( NAME_ITEM_NET )->getBool() );
+    
+    if ( getDatabase().itemExists( NAME_ITEM_WEB ) )
+        _coreModulesLoaded.setModule( WEB_SERVER , getDatabase().getValueForItemName( NAME_ITEM_WEB )->getBool() );
+    
+    if ( getDatabase().itemExists( NAME_ITEM_GPIO ) )
+        _coreModulesLoaded.setModule( GPIO , getDatabase().getValueForItemName( NAME_ITEM_GPIO )->getBool() );
+    
+    if ( getDatabase().itemExists( NAME_ITEM_DISPLAY ) )
+        _coreModulesLoaded.setModule( GRAPHICS , getDatabase().getValueForItemName( NAME_ITEM_DISPLAY )->getBool() );
+    
+    
+    
+    summarizeConfig();
+    
+
+
     
     
     return true;
@@ -140,7 +129,13 @@ bool BroadwayController::prepareForConfigAndReload()
     
     _jsMachine.reset();
     
-    loadConfigFile( _fileConfig );
+    if (!initializeApp() )
+    {
+        Log::log("Error : unable to initialize Application!");
+    }
+        
+    
+    loadConfigFile();
     
     registerFunctions();
     
@@ -496,7 +491,8 @@ void BroadwayController::showSplash()
     _circleComp->setBounds( _scene->getBounds() );
     
     if (_splashScreen == nullptr )
-        _splashScreen = new GXImage( _config.getValueForItemName<std::string>( NAME_ITEM_SPLASHSCREENIMG ) );
+        _splashScreen = new GXImage( getDataValue(NAME_ITEM_SPLASHSCREENIMG, "splash.jpg")->getString() );
+    // getDatabase().getValueForItemName( NAME_ITEM_SPLASHSCREENIMG )->getString() );
 
     _splashScreen->setLayer(0);
     
@@ -540,7 +536,7 @@ bool BroadwayController::run()
  
     bool withLiveParser = true;
     
-    while ( _shouldQuit == false )
+    while ( shouldQuit() == false )
     {
         if (_shouldReset)
             reset();
@@ -616,15 +612,15 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
     {
         const std::string item = vars->getParameter("name")->getString();
         
-        if ( _config.itemExists( item ) )
+        if ( getDatabase().itemExists( item ) )
         {
-            const std::string value = _config.getValueForItemName<std::string>(item);
+            const std::string value = getDatabase().getValueForItemName(item)->getString();
             vars->setReturnVar(new CScriptVar ( value ));
         }
         else
         {
             vars->setReturnVar(new CScriptVar () );
-            Log::log("Value '%s' does not exists in config file '%s'" , item.c_str() , _fileConfig.c_str() );
+            Log::log("Value '%s' does not exists in config file '%s'" , item.c_str() , getDataFile().c_str() );
         }
         
         return true;
@@ -644,8 +640,7 @@ inline bool BroadwayController::broadwayFunctionCalled( const Selector *selector
     
     else if ( selector->identifier == "quit")
     {
-        _shouldQuit = true;
-        
+        sendQuitSignal();
         return true;
     }
     
@@ -1362,9 +1357,9 @@ void BroadwayController::oscReceived( const std::string &ipAddress ,
 /* **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** */
 
 std::string BroadwayController::getRequest( const std::string &ipAddress ,
-                                            const int port,
-                                            const std::string &addressPattern,
-                                            const Database<std::string> &arguments)
+                       const int port,
+                       const std::string &addressPattern,
+                       const Database &arguments)
 {
 
 
@@ -1426,9 +1421,9 @@ void BroadwayController::inputChanged( const InterfaceEvent *event )
         std::ostringstream stream;
         stream
         <<  _gpioCallback <<"("
-        << gpi->pin
+        << gpi->getPin()
         << " , "
-        << gpi->state
+        << gpi->getState()
         << " );";
         
         _jsMachine.evaluateAsString( stream.str().c_str() );

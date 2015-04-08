@@ -15,7 +15,8 @@
 
 #include "../Core/GXExtra/GraphicsComponents.h"
 
-class BroadwayController : public JSMachineDelegate,
+class BroadwayController : public ApplicationBase,
+                           public JSMachineDelegate,
                            public NetworkControllerDelegate,
                            public WebServerDelegate,
                            public SchedulerDelegate,
@@ -50,7 +51,7 @@ private:
     
     /* Machine modules */
     
-    bool loadConfigFile( const std::string fileConfig );
+    bool loadConfigFile();
     
     void registerFunctions();
 
@@ -88,10 +89,9 @@ private:
     void oscReceived(const std::string &ipAddress , const int port,const std::string & addressPattern, const ArgumentsArray &arguments);
     
     std::string getRequest( const std::string &ipAddress ,
-                            const int port,
-                            const std::string &addressPattern,
-                            const Database<std::string> &arguments
-                           );
+                           const int port,
+                           const std::string &addressPattern,
+                           const Database &arguments);
 
 
     void scheduledEventReceived( Event &event);
@@ -99,11 +99,10 @@ private:
     
     void displayDidChange( DisplayNotification notification );
     
-    bool _shouldQuit;
+
     bool _shouldReset;
     
     /* User Attributes */
-    std::string              _fileConfig;
     std::string              _currentScriptFile;
     std::vector<std::string> _userSearchPaths;
     
@@ -112,7 +111,6 @@ private:
     
     JSMachine               _jsMachine;
     Scheduler               _scheduler;    
-    Database< std::string > _config ;
     
     CoreModules             _coreModulesLoaded;
     
